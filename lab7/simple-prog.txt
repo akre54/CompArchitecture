@@ -1,0 +1,40 @@
+Simple loop program implemented in MIPS for the purposes of testing my circuit.
+Loads 4 words from memory (at addr {1: 0}, {2: 0}, {3: ab}, {4: 1}) then starts
+a loop. Loop ends and program branches to line #10 when $r2 equals $r4 (set by
+line 8; when $r3 is less than $r1)
+
+To run, load loopcode.hex into Instruction Memory and data-mem.hex into Data Memory
+
+By Adam Krebs
+Comp Architecture Project #7
+Fall 2011
+
+
+main:   
+1.    lw   $r1 4($0)      /* load data mem address 1 into register r1 */
+2.    lw   $r1 4($1)      /* load data mem address 2 into register r2 */
+3.    lw   $r3 4($2)      /* load data mem address 3 into register r3 */
+4.    lw   $r4 4($3)      /* load data mem address 4 into register r4 */
+
+loop:   
+5.    beq  $r2 $r4 end    /* go to offset of end marker (line10) when r2 is 1 (set below) */
+6.    addi $r1 $r1 1      /* add 1 to r1 */
+7.    sub  $r3 $r3 $r1    /* subtract r1 from r3 and put back into r3 */
+8.    slt  $r2 $r3 $r1    /* set r2 to 1 if r3 is less than r1, otherwise 0 */
+9.    j    loop	          /* jump to the loop offset (line 5) */
+
+end:
+10.   sw   $r3 4($2)      /* store r3 to data mem address 3 */
+
+
+
+1. 1000 1100 0010 0001 0000 0000 0000 0000 == 8C210000
+2. 1000 1100 0100 0010 0000 0000 0000 0000 == 8C420000
+3. 1000 1100 0110 0011 0000 0000 0000 0000 == 8C630000
+4. 1000 1100 1000 0100 0000 0000 0000 0000 == 8C840000
+5. 0001 0000 0100 0100 0000 0000 0000 1010 == 1044000A
+6. 0010 0000 0010 0001 0000 0000 0000 0001 == 20210001
+7. 0000 0000 0110 0001 0001 1000 0010 0010 == 00611822
+8. 0000 0000 0110 0001 0001 0000 0010 1010 == 0061102A
+9. 0000 1000 0000 0000 0000 0000 0000 0101 == 08000005
+a. 1010 1100 0110 0011 0000 0000 0000 0000 == AC630000
